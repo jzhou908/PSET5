@@ -5,10 +5,7 @@ public class ATM {
 	static Scanner in = new Scanner(System.in);
 	BankAccount bankaccount;
 	private Database database;
-	
-	ATM(BankAccount bankaccount){
-		this.bankaccount = bankaccount;
-	}
+
 	public void menu1() throws IOException {
 		System.out.println("What would you like to do?");
 		System.out.println("1. Create Account");
@@ -22,8 +19,16 @@ public class ATM {
 				System.out.println("What is your PIN?");
 				int pin = in.nextInt();
 				in.nextLine();
+				while(Integer.toString(pin).length() != 4) {
+					System.out.println("Invalid Pin.");
+					pin = in.nextInt();
+					in.nextLine();
+				}
 				System.out.println("What is your First name?");
 				String fname = in.nextLine();
+				if(fname.length() > 15) {
+					fname = fname.substring(0, 20);
+				}
 				System.out.println("What is your Last Name?");
 				String lname = in.nextLine();
 				System.out.println("What is your date of birth?(yyyymmdd)");
@@ -50,6 +55,7 @@ public class ATM {
 				System.out.println("What is your pin?");
 				int pin = in.nextInt();
 				in.nextLine();
+				bankaccount = this.database.getAccount(acc);
 				if(pin == this.bankaccount.getUser().getPin() && acc == this.bankaccount.getAccount()) {
 					this.menu2();
 				}
@@ -126,10 +132,19 @@ public class ATM {
 			System.out.println("What account would you like to transfer to?");
 			long accountnumber = in.nextLong();
 			in.nextLine();
-			switch (this.bankaccount.transfer(x, database.getAccount(accountnumber))) {
-				case 0: System.out.println("Cannot transfer more than balance.");
-				case 1: System.out.println("Cannot transfer a negative amount.");
-				case 2: System.out.println("Transfer Complete.");
+			if(this.database.getAccount(accountnumber) == null) {
+				System.out.println("Choose a valid account number.");
+			}
+			else{
+				switch (this.bankaccount.transfer(x, database.getAccount(accountnumber))) {
+				case 0: 
+					System.out.println("Cannot transfer more than balance.");
+				case 1: 
+					System.out.println("Cannot transfer a negative amount.");
+				case 2: 
+					System.out.println("Transfer Complete.");
+					this.database.updateAccount(bankaccount, database.getAccount(accountnumber));
+				}	
 			}
 		}
 		else if(a == 6) {
@@ -154,7 +169,7 @@ public class ATM {
 		}
 	}
 	public boolean again() {
-		System.out.println("Do you want to use another account? (1 for yes/2 for no)");
+		System.out.println("Do you want to use it again? (1 for yes/2 for no)");
 		int answer = in.nextInt();
 		in.nextLine();
 		if(answer == 1) {
