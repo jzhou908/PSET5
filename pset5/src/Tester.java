@@ -1,14 +1,17 @@
+import java.io.*;
 /**
  * This class has only one responsibility: start the ATM program!
  */
 
 public class Tester {
 	
-	private Database database;
-	private BankAccount bankaccount;
-	
-	public static void main(String[] args) {
-		ATM atm = new ATM(BankAccount bankaccount);
-		
+	public static void main(String[] args) throws IOException {
+		ATM atm = new ATM();
+		do {
+			atm.menu1();
+		}while(atm.again());
+		do {
+			atm.menu2();
+		}while(atm.again());
 	}
 }
